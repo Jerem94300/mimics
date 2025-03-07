@@ -9,12 +9,22 @@
     Rediriger l'internaute si il tente d'acceder à cette page si l'internaute n'est pas identifié
  #}
 
- <div class="container mb-4">
-     <h1 class="text-center my-4">Mon compte</h1>
+<div class="container mb-4">
+    <h1 class="text-center my-4">Mon compte</h1>
 
-
-
-
+    {% if app.user %}
+        <div class="card p-4 shadowv text-center">
+            <h2>Bienvenue, {{ app.user.firstName }}</h2>
+            <p><strong>Email :</strong> {{ app.user.email }}</p>
+            <p><strong>Nom :</strong> {{ app.user.lastName }}</p>
+            <p><strong>Prénom :</strong> {{ app.user.firstName }}</p>
+            <p><strong>Adresse :</strong> {{ app.user.address }}</p>
+            <p><strong>Ville :</strong> {{ app.user.city }}</p>
+            <p><strong>Code postale :</strong> {{ app.user.city }}</p>
+        </div>
+    {% else %}
+        <p>Vous devez être connecté pour accéder à cette page.</p>
+    {% endif %}
 </div>
 
 {% endblock %}
