@@ -16,11 +16,13 @@ class RegistrationController extends AbstractController
     #[Route('/register', name: 'app_register')]
     public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
     {
-        
+        if ($this->getUser()) {
+            return $this->redirectToRoute('app_home');
+        }
         // dump($request);
 
         $user = new User();
-        dump($user);
+        // dump($user);
 
         $form = $this->createForm(RegistrationFormType::class, $user);
 
@@ -36,7 +38,7 @@ class RegistrationController extends AbstractController
             // execute()
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_home');
+            return $this->redirectToRoute('app_login');
 
 
             dump($passwordHash);

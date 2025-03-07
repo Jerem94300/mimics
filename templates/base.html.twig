@@ -59,13 +59,20 @@
                 <i class="fa fa-search" aria-hidden="true"></i>
               </button>
             </from>
+            {{ dump(app.user) }}
             <div class="user_option_box">
-              <a href="" class="account-link">
+
+            {% if app.user %}
+              
+        
+              <a href="{{ path('app_my_account')}}" class="account-link">
                 <i class="fa fa-user" aria-hidden="true"></i>
                 <span>
                   Mon compte
                 </span>
               </a>
+
+                  {% endif %}
               <a href="" class="cart-link">
                 <i class="fa fa-shopping-cart" aria-hidden="true"></i>
                 <span>
@@ -107,15 +114,18 @@
                 <li class="nav-item">
                   <a class="nav-link" href="{{ path('app_testimonial')}}">Livre d'or</a>
                 </li>
+                {% if not app.user %}
                 <li class="nav-item">
                   <a class="nav-link" href="{{ path('app_login')}}"> Connexion</a>
                 </li>
                  <li class="nav-item">
                   <a class="nav-link" href="{{ path('app_register')}}"> Créer votre compte</a>
                 </li>
+                 {% else %}
                   <li class="nav-item">
                   <a class="nav-link" href="{{ path('app_logout')}}"> Déconnexion</a>
                 </li>
+                  {% endif %}
               </ul>
             </div>
           </nav>
