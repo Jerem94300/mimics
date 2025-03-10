@@ -1,0 +1,89 @@
+{% extends 'base.admin.html.twig' %}
+
+{% block title %}Admin Mimics | Catégorie de produits
+{% endblock %}
+
+{% block body %}
+
+	<div class="container">
+		{% for label, messages in app.flashes(['success', 'danger']) %}
+			{% for message in messages %}
+				<div class="bg-{{ label }} text-white p-3 mb-3">
+					{{ message|raw }}
+				</div>
+			{% endfor %}
+		{% endfor %}
+
+		<div>
+			<h2 class="my-4 fs-3">Liste des catégories</h2>
+
+			<table class="table table-striped text-center align-item-center">
+				<thead>
+					<tr>
+						<th class="text-center">Titre</th>
+						<th class="text-center">Description</th>
+						<th class="text-center">Enregistré le</th>
+						<th class="text-center">Action</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for item in dbCategory %}
+						{# {{ dump(item) }} #}
+						<tr>
+							<td>{{ item.title }}</td>
+							<td>{{ item.description }}</td>
+							<td>{{ item.createdAt|date('d/m/Y à H:i:s') }}</td>
+							<td class="d-flex gap-2 p-2">
+								<a href="{{ path('app_admin_category_update', {'id': item.id}) }}" class="btn btn-dark ">
+									<i class="fa-solid fa-pen"></i>
+								</a>
+								<a href="" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal">
+									<i class="fa-solid fa-trash"></i>
+								</a>
+
+							</td>
+
+
+							<!-- Modal -->
+							<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+								<div class="modal-dialog">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+											<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+										</div>
+										<div class="modal-body">
+											...
+										</div>
+										<div class="modal-footer">
+											<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+											<button type="button" class="btn btn-primary">Save changes</button>
+										</div>
+									</div>
+								</div>
+							</div>
+
+						</tr>
+
+					{% endfor %}
+				</tbody>
+
+			</table>
+
+		</div>
+
+		<div>
+			<h2 class="my-4 fs-3">Ajouter une catégorie</h2>
+
+			{{ form_start(categoryForm) }}
+			{{ form_row(categoryForm.title) }}
+			{{ form_row(categoryForm.description) }}
+			<button type="submit">Enregistrer</button>
+			{{ form_end(categoryForm) }}
+		</div>
+
+
+	</div>
+
+
+{% endblock %}
