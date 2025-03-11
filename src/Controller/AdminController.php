@@ -3,14 +3,20 @@
 namespace App\Controller;
 
 use App\Entity\Category;
+use App\Entity\Product;
 use App\Form\CategoryFormType;
+use App\Form\ProductFormType;
 use App\Repository\CategoryRepository;
+use App\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\Console\EntityManagerProvider;
+use PhpParser\Node\Stmt\TryCatch;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 final class AdminController extends AbstractController
 {
@@ -21,10 +27,132 @@ final class AdminController extends AbstractController
     }
 
     #[Route('/admin/products', name: 'app_admin_products')]
-    public function adminProducts(): Response
+    #[Route('/admin/product/update/{id}', name: 'app_admin_product_update')]
+
+    // ?Product $product : le ? veut dire que par defaut $product a une valeur null
+    public function adminProducts(?Product $product, Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger, ProductRepository $repoProduct): Response
     {
-        return $this->render('admin/products.html.twig', []);
+        dump($product);
+        if (!$product) {
+            $product = new Product;
+        }
+
+
+        $form = $this->createForm(ProductFormType::class, $product);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $pictureFile = $form->get('picture')->getData();
+            // dump($pictureFile);
+
+
+            if ($pictureFile) {
+                //retourne le nom du fichier d'origine sans l'extension
+                $originalFileName = pathinfo($pictureFile->getClientOriginalName(), PATHINFO_FILENAME);
+                dump($originalFileName);
+                //slug() sécurise le nom du fichier (supression des espace etc..)
+                $safeFileName = $slugger->slug($originalFileName);
+                // dump($safeFileName);
+                // on renomme l'image
+                $newFileName = $safeFileName . '-' . uniqid() . '.' . $pictureFile->guessExtension();
+                // dump($newFileName);
+                // dump($this->getParameter('image_directory'));
+                $currentPath = $this->getParameter('image_directory');
+
+                try {
+                    $pictureFile->move($currentPath, $newFileName);
+                } catch (FileException $e) {
+                    dump($e);
+                }
+
+                $product->setPicture($newFileName);
+
+                dump($product);
+            }
+
+            $product->setCreateAt(new \DateTimeImmutable());
+            $entityManager->persist($product);
+            $entityManager->flush();
+
+            $this->addFlash('success', "Le produit a été ajouté");
+
+            return $this->redirectToRoute('app_admin_products');
+        }
+
+        // Exo selectionner les produits, transmettre au template et afficher les données dans product.html
+
+
+
+        $dbProduct = $repoProduct->findAll();
+        dump($dbProduct);
+
+
+
+        return $this->render('admin/products.html.twig', [
+            'productForm' => $form,
+            'dbProduct' => $dbProduct,
+            'pictureFile' => $product->getPicture()
+        ]);
     }
+
+
+    // #[Route('/admin/product/update/{id}', name: 'app_admin_product_update')]
+    // public function adminProductUpdate($id, Product $product, Request $request, EntityManagerInterface $entityManager, ProductRepository $repoProduct): Response
+    // {
+    //     // dump($category);
+
+    //     //SELECT * FROM category WHERE id = $id + fetch(PDO::FETCH_ASSOC)
+    //     $product = $repoProduct->find($id);
+    //     // dump($id);
+    //     // dump($category);
+
+    //     $form = $this->createForm(ProductFormType::class, $product);
+
+    //     $form->handleRequest($request);
+
+    //     if ($form->isSubmitted() && $form->isValid()) {
+
+    //         $entityManager->persist($product);
+    //         $entityManager->flush();
+
+    //         dump($product->getTitle());
+    //         $productTitle = $product->getTitle();
+
+    //         $this->addFlash('success', "Le produit <strong class='text-white'>$productTitle</strong> a été modifiée.");
+
+    //         // return $this->redirectToRoute('app_admin_category');
+    //     }
+
+    //     $dbProduct = $repoProduct->findAll();
+
+    //     return $this->render('admin/products.html.twig', [
+    //         'productForm' => $form,
+    //         'dbProduct' => $dbProduct
+    //     ]);
+    // }
+
+
+    #[Route('/admin/product/remove{id}', name: 'app_admin_product_remove')]
+    public function adminProductRemove($id, EntityManagerInterface $entityManager, ProductRepository $repoProduct)
+    {
+
+        $product = $repoProduct->find($id);
+        // dump($product);
+
+        $productTitle = $product->getTitle();
+
+
+        $entityManager->remove($product);
+        $entityManager->flush();
+
+        $this->addFlash('success', "La catégorie  <strong class='text-white'>$productTitle</strong> a été supprimée");
+
+        return $this->redirectToRoute('app_admin_product');
+    }
+
+
 
     #[Route('/admin/category', name: 'app_admin_category')]
     public function adminCategory(Request $request, EntityManagerInterface $entityManager, CategoryRepository $repoCategory): Response
@@ -97,9 +225,21 @@ final class AdminController extends AbstractController
     }
 
     #[Route('/admin/category/remove{id}', name: 'app_admin_category_remove')]
-    public function adminCategoryRemove(EntityManagerInterface $entityManager, CategoryRepository $repoCategory)
+    public function adminCategoryRemove($id, EntityManagerInterface $entityManager, CategoryRepository $repoCategory)
     {
-        // return $this->render('admin/orders.html.twig', []);
+
+        $category = $repoCategory->find($id);
+        // dump($category);
+
+        $categoryTitle = $category->getTitle();
+
+
+        $entityManager->remove($category);
+        $entityManager->flush();
+
+        $this->addFlash('success', "La catégorie  <strong class='text-white'>$categoryTitle</strong> a été supprimée");
+
+        return $this->redirectToRoute('app_admin_category');
     }
 
 

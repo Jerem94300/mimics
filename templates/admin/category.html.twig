@@ -5,6 +5,12 @@
 
 {% block body %}
 
+	<style>
+		.modal-backdrop {
+			z-index: 1 !important;
+		}
+	</style>
+
 	<div class="container">
 		{% for label, messages in app.flashes(['success', 'danger']) %}
 			{% for message in messages %}
@@ -34,10 +40,10 @@
 							<td>{{ item.description }}</td>
 							<td>{{ item.createdAt|date('d/m/Y à H:i:s') }}</td>
 							<td class="d-flex gap-2 p-2">
-								<a href="{{ path('app_admin_category_update', {'id': item.id}) }}" class="btn btn-dark ">
+								<a href="{{ path('app_admin_category_update', {'id': item.id}) }}" class="btn btn-primary ">
 									<i class="fa-solid fa-pen"></i>
 								</a>
-								<a href="" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal">
+								<a href="" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#category-{{ item.id }}">
 									<i class="fa-solid fa-trash"></i>
 								</a>
 
@@ -45,19 +51,21 @@
 
 
 							<!-- Modal -->
-							<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+							<div class="modal fade" id="category-{{ item.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 								<div class="modal-dialog">
 									<div class="modal-content">
 										<div class="modal-header">
-											<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+											<h5 class="modal-title" id="exampleModalLabel">Catégorie :
+												<strong>{{item.title }}</strong>
+											</h5>
 											<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 										</div>
 										<div class="modal-body">
-											...
+											Voulez-vous supprimer cette catégorie?
 										</div>
 										<div class="modal-footer">
-											<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-											<button type="button" class="btn btn-primary">Save changes</button>
+											<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+											<a href="{{ path('app_admin_category_remove', {'id': item.id}) }}" class="btn btn-primary">Supprimer</a>
 										</div>
 									</div>
 								</div>

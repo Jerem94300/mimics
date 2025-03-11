@@ -33,6 +33,9 @@
 	</head>
 
 	<body>
+		{# Déclaration de variable TWIG, retourne la route sur laquelle nous nous trouvons #}
+		{% set currentPath = app.request.attributes.get('_route') %}
+		{# {{ dump(currentPath) }} #}
 		<div id="app">
 			<nav id="navbar-main" class="navbar is-fixed-top">
 				<div class="navbar-brand">
@@ -55,26 +58,26 @@
 								<!-- <span class="icon"><i class="mdi mdi-chevron-down"></i></span> -->
 							</a>
 							<!-- <div class="navbar-dropdown">
-																																																								                <a href="profile.php" class="navbar-item">
-																																																								                  <span class="icon"><i class="mdi mdi-account"></i></span>
-																																																								                  <span>My Profile</span>
-																																																								                </a>
-																																																								                <a class="navbar-item">
-																																																								                  <span class="icon"><i class="mdi mdi-settings"></i></span>
-																																																								                  <span>Settings</span>
-																																																								                </a>
-																																																								                <a class="navbar-item">
-																																																								                  <span class="icon"><i class="mdi mdi-email"></i></span>
-																																																								                  <span>Messages</span>
-																																																								                </a>
-																																																								                <hr class="navbar-divider" />
-																																																								                <a class="navbar-item">
-																																																								                  <span class="icon"><i class="mdi mdi-logout"></i></span>
-																																																								                  <span>Log Out</span>
-																																																								                </a>
-																																																								              </div> -->
+																																																																																																																														                <a href="profile.php" class="navbar-item">
+																																																																																																																														                  <span class="icon"><i class="mdi mdi-account"></i></span>
+																																																																																																																														                  <span>My Profile</span>
+																																																																																																																														                </a>
+																																																																																																																														                <a class="navbar-item">
+																																																																																																																														                  <span class="icon"><i class="mdi mdi-settings"></i></span>
+																																																																																																																														                  <span>Settings</span>
+																																																																																																																														                </a>
+																																																																																																																														                <a class="navbar-item">
+																																																																																																																														                  <span class="icon"><i class="mdi mdi-email"></i></span>
+																																																																																																																														                  <span>Messages</span>
+																																																																																																																														                </a>
+																																																																																																																														                <hr class="navbar-divider" />
+																																																																																																																														                <a class="navbar-item">
+																																																																																																																														                  <span class="icon"><i class="mdi mdi-logout"></i></span>
+																																																																																																																														                  <span>Log Out</span>
+																																																																																																																														                </a>
+																																																																																																																														              </div> -->
 						</div>
-						<a href="../index.php" title="Log out" class="navbar-item is-desktop-icon-only">
+						<a href="{{ path('app_home') }}" title="Log out" class="navbar-item is-desktop-icon-only">
 							<span class="icon">
 								<i class="mdi mdi-logout"></i>
 							</span>
@@ -95,8 +98,8 @@
 					<p class="menu-label">General</p>
 					<ul class="menu-list">
 						<li>
-							<a href="{{ path('app_admin') }}" class="has-icon">
-								<span class="icon">
+							<a href="{{ path('app_admin') }}" class="{% if currentPath is same as 'app_admin' %}is-active{% endif %} has-icon">
+								<span class="icon {% if currentPath is same as 'app_admin' %} has-update-mark{% endif %}">
 									<i class="mdi mdi-desktop-mac"></i>
 								</span>
 								<span class="menu-item-label">Dashboard</span>
@@ -106,39 +109,39 @@
 					<p class="menu-label">MENU</p>
 					<ul class="menu-list">
 						<li class="">
-							<a href="{{ path('app_admin_category') }}" class="has-icon">
-								<span class="icon">
+							<a href="{{ path('app_admin_category') }}" class="{% if currentPath is same as 'app_admin_category' %}is-active{% endif %} has-icon">
+								<span class="icon {% if currentPath is same as 'app_admin_category' %} has-update-mark{% endif %}">
 									<span class="mdi mdi-store"></span>
 								</span>
 								<span class="menu-item-label">Catégories produits</span>
 							</a>
 						</li>
 						<li class="">
-							<a href="{{ path('app_admin_products') }}" class="has-icon">
-								<span class="icon">
+							<a href="{{ path('app_admin_products') }}" class="{% if currentPath is same as 'app_admin_products' %}is-active{% endif %} has-icon">
+								<span class="icon {% if currentPath is same as 'app_admin_products' %} has-update-mark{% endif %}">
 									<span class="mdi mdi-store"></span>
 								</span>
 								<span class="menu-item-label">Produits</span>
 							</a>
 						</li>
 						<li>
-							<a href="{{ path('app_admin_orders') }}" class="has-icon">
-								<span class="icon">
+							<a href="{{ path('app_admin_orders') }}" class="{% if currentPath is same as 'app_admin_orders' %}is-active{% endif %} has-icon">
+								<span class="icon {% if currentPath is same as 'app_admin_orders' %} has-update-mark{% endif %}">
 									<span class="mdi mdi-sheep"></span>
 								</span>
 								<span class="menu-item-label">Commandes</span>
 							</a>
 						</li>
 						<li>
-							<a href="{{ path('app_admin_users') }}" class="has-icon">
-								<span class="icon">
+							<a href="{{ path('app_admin_users') }}" class="{% if currentPath is same as 'app_admin_users' %}is-active{% endif %} has-icon">
+								<span class="icon {% if currentPath is same as 'app_admin_users' %} has-update-mark {% endif %} ">
 									<i class="mdi mdi-account-circle"></i>
 								</span>
 								<span class="menu-item-label">Utilisateurs</span>
 							</a>
 						</li>
 						<li>
-							<a href="../index.php" title="Log out" class="has-icon">
+							<a href="{{ path('app_home') }}" title="Log out" class="has-icon">
 								<span class="icon">
 									<i class="mdi mdi-logout"></i>
 								</span>
