@@ -25,7 +25,22 @@
 						<td colspan="7" class="text-center">Ancun article dans le panier</td>
 
 					</tr>
-					{% else %}
+				{% else %}
+					{% for item in dataCart %}
+						{{ dump(item) }}
+						<tr>
+							<td>{{ item.product.picture}}</td>
+							<td>{{ item.product.title}}</td>
+							<td>{{ item.product.reference}}</td>
+							<td>{{ item.product.category.title}}</td>
+							<td>{{ item.quantity}}</td>
+							<td>{{ item.product.price}}</td>
+
+
+						</tr>
+
+
+					{% endfor %}
 
 
 				{% endif %}
