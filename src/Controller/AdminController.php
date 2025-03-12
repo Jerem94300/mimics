@@ -32,7 +32,11 @@ final class AdminController extends AbstractController
     // ?Product $product : le ? veut dire que par defaut $product a une valeur null
     public function adminProducts(?Product $product, Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger, ProductRepository $repoProduct): Response
     {
-        dump($product);
+        // dump($product);
+        // Si la variable $product n'est pas (!), si elle renvoie false, cela qu'auvun id product n'est passé dans l'URL alors on entre dans la condition et on initialise un objet Entity $product, donc c'est une insertion de produit
+
+        // 2 eme route : '/admin/products/ipdate/{id}'
+        //on envoi un id $product dans l'URL, symfony comprend que l'on a besoin d'un objet entity product issu de la table SQL product, il est capable automatiquement d'aller selectionner en BDD le produit et de l'envoyer en argument de la fonction ?Product $product, à ce moment là la variable $product contitn les données du produit que l'onn souhaite modifié, alors on ne rentre pas dans la condition if 
         if (!$product) {
             $product = new Product;
         }
@@ -51,7 +55,7 @@ final class AdminController extends AbstractController
             if ($pictureFile) {
                 //retourne le nom du fichier d'origine sans l'extension
                 $originalFileName = pathinfo($pictureFile->getClientOriginalName(), PATHINFO_FILENAME);
-                dump($originalFileName);
+                // dump($originalFileName);
                 //slug() sécurise le nom du fichier (supression des espace etc..)
                 $safeFileName = $slugger->slug($originalFileName);
                 // dump($safeFileName);
@@ -71,12 +75,19 @@ final class AdminController extends AbstractController
 
                 dump($product);
             }
+            // Si la condition retourne True, cela veut dire que l'id est connu en BDD, c'est une modification
+            if ($product->getId()) {
+                $messageValidate = "Les modifications ont été enrgistrées.";
+            } else {
+                // Sinon dans tous les autres cas c'est une insertion
+                $messageValidate = "L'article a été enrgistrées.";
+            }
 
             $product->setCreateAt(new \DateTimeImmutable());
             $entityManager->persist($product);
             $entityManager->flush();
 
-            $this->addFlash('success', "Le produit a été ajouté");
+            $this->addFlash('success', $messageValidate);
 
             return $this->redirectToRoute('app_admin_products');
         }
@@ -139,7 +150,7 @@ final class AdminController extends AbstractController
     {
 
         $product = $repoProduct->find($id);
-        // dump($product);
+        dump($product);
 
         $productTitle = $product->getTitle();
 
@@ -147,9 +158,9 @@ final class AdminController extends AbstractController
         $entityManager->remove($product);
         $entityManager->flush();
 
-        $this->addFlash('success', "La catégorie  <strong class='text-white'>$productTitle</strong> a été supprimée");
+        $this->addFlash('success', "Le produit  <strong class='text-white'>$productTitle</strong> a été supprimé");
 
-        return $this->redirectToRoute('app_admin_product');
+        return $this->redirectToRoute('app_admin_products');
     }
 
 
@@ -229,15 +240,16 @@ final class AdminController extends AbstractController
     {
 
         $category = $repoCategory->find($id);
-        // dump($category);
+        dump($category->getProducts()->isEmpty());
 
-        $categoryTitle = $category->getTitle();
+        if ($category->getProducts()->isEmpty()) {
+            $entityManager->remove($category);
+            $entityManager->flush();
+            $this->addFlash('success', "La catégorie a été supprimée");
+        } else {
+            $this->addFlash('success', "Impossible de supprimer la catégorie, des articles y sont associés");
+        }
 
-
-        $entityManager->remove($category);
-        $entityManager->flush();
-
-        $this->addFlash('success', "La catégorie  <strong class='text-white'>$categoryTitle</strong> a été supprimée");
 
         return $this->redirectToRoute('app_admin_category');
     }

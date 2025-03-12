@@ -29,11 +29,11 @@ class RegistrationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            
+
             $plainPassword = $form->get('password')->getData();
-            $passwordHash = $userPasswordHasher->hashPassword($user, $plainPassword );
+            $passwordHash = $userPasswordHasher->hashPassword($user, $plainPassword);
             $user->setPassword($passwordHash);
-//                              prepare(INSERT INTO user .....)
+            //                              prepare(INSERT INTO user .....)
             $entityManager->persist(($user));
             // execute()
             $entityManager->flush();
@@ -41,8 +41,8 @@ class RegistrationController extends AbstractController
             return $this->redirectToRoute('app_login');
 
 
-            dump($passwordHash);
-            dump($user);
+            // dump($passwordHash);
+            // dump($user);
 
 
         }

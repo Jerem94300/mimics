@@ -1,0 +1,70 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mimics | Home | Details
+{% endblock %}
+
+{% block body %}
+
+{% for item in dbProduct %}
+	{# {{ dump(item) }} #}
+	{% if item.id == id %}
+		{# {{ dump(item.id) }} #}
+		<div class="container d-flex flex-column justify-content-center align-item-center py-4">
+
+			<h1 class="title_h1 text-center">{{ item.title }}</h1>
+
+			<div class="card mb-3 align-self-center " style="width: 80rem;">
+				<div class="row g-0">
+					<div class="col-md-4 align-self-center">
+						<img src="{{ asset('uploads/images/' ~ item.picture) }}" class="img-fluid rounded-start p-4" alt="...">
+					</div>
+					<div class="col-md-8">
+						<div class="card-body">
+							<small class="card-title">Référence :
+								{{ item.reference }}</small>
+							<p class="card-title">Catégorie :
+								{{ item.category.title }}</p>
+							<p class="card-text mb-4">{{ item.description }}</p>
+							<p class="card-text">
+								<strong class="text-muted">
+									{{ item.price }}
+									€</strong>
+							</p>
+
+
+							{% if item.stock %}
+								{% if item.stock <= 5 %}
+									<i class="text-danger">Plus que
+										{{ item.stock }}
+										articles disponible</i>
+								{% endif %}
+
+								<form action="{{ path('app_cart_add', {'id': item.id}) }}" method="post" class="d-flex align-items-center mt-4">
+									<div class="form-group m-0">
+										<select name="quantity" id="quantity" class="form-control">
+											{% for number in 1..item.stock %}
+												{% if number <= item.stock and number <= 10 %}
+													<option value="{{ number }}">{{ number }}</option>
+												{% endif %}
+											{% endfor %}
+
+										</select>
+									</div>
+									<button type="submit" class="ml-2 btn btn-dark">Ajouter au panier</button>
+
+
+								</form>
+							{% else %}
+								<i class="text-danger">Rupture de stock</i>
+
+							{% endif %}
+
+						</div>
+
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>{% endif %}{% endfor %}{% endblock %}

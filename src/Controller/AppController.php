@@ -2,16 +2,28 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Repository\ProductRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 final class AppController extends AbstractController
 {
     #[Route('/', name: 'app_home')]
-    public function index(): Response
+    public function index(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger, ProductRepository $repoProduct): Response
     {
-        return $this->render('app/index.html.twig', []);
+
+        // exo : selectionner tous les produits enregistés en BDD (repository), transmettre au template les produits selectionnés (render), réaliser les traitements permettant d'afficher les produits dans le template index.twig, créer une nouvelle methode appProductDetail avec la route 'app/product/detail/{id}' / app_product_details, nouveau template 'app/product.details.html.twig', selectionner en BDD le produit, afficher les info du produits
+
+        $dbProduct = $repoProduct->findAll();
+        dump($dbProduct);
+        return $this->render('app/index.html.twig', [
+            'dbProduct' => $dbProduct,
+
+        ]);
     }
 
     #[Route('/products', name: 'app_products')]
@@ -19,6 +31,30 @@ final class AppController extends AbstractController
     {
         return $this->render('app/products.html.twig', []);
     }
+
+
+    #[Route('/product/detail/{id}', name: 'app_product_details')]
+    public function appProductDetails($id, Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger, ProductRepository $repoProductDetails): Response
+    {
+        dump($repoProductDetails);
+        dump($id);
+
+        //recupération de tous les produits
+        $dbProduct = $repoProductDetails->findAll();
+        dump($dbProduct);
+
+        // Recupération du produit selectionné
+        // $product = $repoProductDetails->findAll($id);
+        // dump($product);
+
+
+        return $this->render('app/product.details.html.twig', [
+            'dbProduct' => $dbProduct,
+            'id' => $id,
+
+        ]);
+    }
+
 
     #[Route('/about', name: 'app_about')]
     public function appAbout(): Response

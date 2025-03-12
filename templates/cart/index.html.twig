@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mimic | Votre panier
+{% endblock %}
+
+{% block body %}
+
+
+	<div class="container my-5">
+		<table class="table table-borderless">
+			<thead>
+				<tr>
+					<th>Photo</th>
+					<th>Titre</th>
+					<th>Référence</th>
+					<th>Catégorie</th>
+					<th>Quantité</th>
+					<th>Prix unitaire</th>
+					<th>Prix total</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% if dataCart is empty %}
+					<tr>
+						<td colspan="7" class="text-center">Ancun article dans le panier</td>
+
+					</tr>
+					{% else %}
+
+
+				{% endif %}
+
+			</tbody>
+
+		</table>
+
+
+	</div>
+
+
+{% endblock %}
