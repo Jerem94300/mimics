@@ -20,16 +20,33 @@ final class AppController extends AbstractController
 
         $dbProduct = $repoProduct->findAll();
         dump($dbProduct);
+        // Sélection des 3 derniers produits
+        $dbProduct = $repoProduct->getMaxProducts();
+
+
+        // $dbProductFilter = $repoProduct->findBy([], ['id' => 'DESC'], 3);
         return $this->render('app/index.html.twig', [
             'dbProduct' => $dbProduct,
+            // 'dbProductFilter' => $dbProductFilter,
 
         ]);
     }
 
+
+
     #[Route('/products', name: 'app_products')]
-    public function appProducts(): Response
+    public function appProducts(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger, ProductRepository $repoProduct): Response
     {
-        return $this->render('app/products.html.twig', []);
+        $dbProduct = $repoProduct->findAll();
+        dump($dbProduct);
+
+        // Sélection des 3 derniers produits
+        $dbProductFilter = $repoProduct->findBy([], ['id' => 'DESC'], 3);
+        return $this->render('app/products.html.twig', [
+            'dbProduct' => $dbProduct,
+
+
+        ]);
     }
 
 
